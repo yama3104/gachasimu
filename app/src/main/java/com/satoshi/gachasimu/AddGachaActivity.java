@@ -113,6 +113,7 @@ public class AddGachaActivity extends AppCompatActivity implements View.OnClickL
                 GachaModel model = null;
 
                 if(name.length() != 0 && sum == 100) {
+                    //以下がDBへの書き込み
                     realm.beginTransaction();
                     model = realm.createObject(GachaModel.class);
                     model.setName(name);

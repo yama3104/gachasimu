@@ -47,7 +47,7 @@ public class ResultActivity extends AppCompatActivity implements View.OnClickLis
         setContentView(R.layout.activity_result);
 
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("10連結果");
+        actionBar.setTitle("結果");
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         AdView mAdView = findViewById(R.id.adView);
@@ -133,19 +133,56 @@ public class ResultActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
+    //ガチャの結果に応じて画像をセットする
     public void setImage(ImageView iv, int i){
-        if(i == 1) {
-            iv.setImageResource(R.drawable.gakki1);
-        } else if(i == 2){
-            iv.setImageResource(R.drawable.gakki2);
-        } else if(i == 3){
-            iv.setImageResource(R.drawable.gakki3);
-        } else if(i == 4){
-            iv.setImageResource(R.drawable.gakki4);
-        } else if(i == 5){
-            iv.setImageResource(R.drawable.gakki5);
+        Realm realm = Realm.getDefaultInstance();
+        RealmQuery<SettingModel> query = realm.where(SettingModel.class);
+        RealmResults<SettingModel> results = query.findAll();
+
+        int category = results.get(0).getImg_category();
+
+        if(category == 1) {
+            if (i == 1) {
+                iv.setImageResource(R.drawable.dessert1);
+            } else if (i == 2) {
+                iv.setImageResource(R.drawable.dessert2);
+            } else if (i == 3) {
+                iv.setImageResource(R.drawable.dessert3);
+            } else if (i == 4) {
+                iv.setImageResource(R.drawable.dessert4);
+            } else if (i == 5) {
+                iv.setImageResource(R.drawable.dessert5);
+            } else {
+                iv.setImageResource(R.drawable.error);
+            }
+        } else if(category == 2){
+            if (i == 1) {
+                iv.setImageResource(R.drawable.bunbougu1);
+            } else if (i == 2) {
+                iv.setImageResource(R.drawable.bunbougu2);
+            } else if (i == 3) {
+                iv.setImageResource(R.drawable.bunbougu3);
+            } else if (i == 4) {
+                iv.setImageResource(R.drawable.bunbougu4);
+            } else if (i == 5) {
+                iv.setImageResource(R.drawable.bunbougu5);
+            } else {
+                iv.setImageResource(R.drawable.error);
+            }
         } else {
-            iv.setImageResource(R.drawable.error);
+            if (i == 1) {
+                iv.setImageResource(R.drawable.gakki1);
+            } else if (i == 2) {
+                iv.setImageResource(R.drawable.gakki2);
+            } else if (i == 3) {
+                iv.setImageResource(R.drawable.gakki3);
+            } else if (i == 4) {
+                iv.setImageResource(R.drawable.gakki4);
+            } else if (i == 5) {
+                iv.setImageResource(R.drawable.gakki5);
+            } else {
+                iv.setImageResource(R.drawable.error);
+            }
         }
     }
 
