@@ -1,7 +1,9 @@
 package com.satoshi.gachasimu;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -9,8 +11,10 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import io.realm.Realm;
 import io.realm.RealmQuery;
@@ -18,7 +22,7 @@ import io.realm.RealmResults;
 
 public class SettingActivity extends AppCompatActivity implements View.OnClickListener {
 
-    final String[] items = {"item1", "item2", "item3"};
+    final String[] items = {"楽器", "デザート", "文房具"};
     Button setting_img_btn;
 
     @Override
@@ -31,6 +35,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         setting_img_btn = findViewById(R.id.setting_img_btn);
+        setting_img_btn.setOnClickListener(this);
     }
 
     @Override
@@ -39,50 +44,46 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
 
         setting_img_btn = findViewById(R.id.setting_img_btn);
 
-        Realm realm = Realm.getDefaultInstance();
-        RealmQuery<SettingModel> query = realm.where(SettingModel.class);
-        RealmResults<SettingModel> results = query.findAll();
+        SharedPreferences data = getSharedPreferences("SettingSave", Context.MODE_PRIVATE);
+        int category = data.getInt("imgCategory",0);
+        setting_img_btn.setText(items[category]);
 
-        int category = results.get(0).getImg_category();
-        setting_img_btn.setText(""+category);
+
     }
 
     public void onClick(View v) {
-
         switch (v.getId()) {
             case R.id.setting_img_btn:
-                // リスト表示用のアラートダイアログ
+
                 AlertDialog.Builder listDlg = new AlertDialog.Builder(this);
-                listDlg.setTitle("タイトル");
                 listDlg.setItems(
                         items,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 // リスト選択時の処理
-                                // which は、選択されたアイテムのインデックス
+                                // id は、選択されたアイテムのインデックス
 
-                                Realm realm = Realm.getDefaultInstance();
-                                RealmQuery<SettingModel> query = realm.where(SettingModel.class);
-                                RealmResults<SettingModel> results = query.findAll();
-                                if(results.get(0).getImg_category() >0) {
-                                    results.get(0).setImg_category(id);
-                                    realm.commitTransaction();
-                                } else {
-                                    //Realm realm = Realm.getDefaultInstance();
-                                    SettingModel model = null;
-
-                                    realm.beginTransaction();
-                                    model = realm.createObject(SettingModel.class);
-                                    model.setImg_category(id);
-                                    realm.commitTransaction();
-                                }
+                                SharedPreferences data = getSharedPreferences("SettingSave", Context.MODE_PRIVATE);
+                                SharedPreferences.Editor editor = data.edit();
+                                editor.putInt("imgCategory", id);
+                                editor.apply();
+                                setting_img_btn.setText(items[id]);
                             }
                         });
-
-                // 表示
                 listDlg.create().show();
                 break;
         }
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

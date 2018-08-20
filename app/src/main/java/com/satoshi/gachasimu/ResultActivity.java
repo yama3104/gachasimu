@@ -1,6 +1,8 @@
 package com.satoshi.gachasimu;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -118,8 +120,9 @@ public class ResultActivity extends AppCompatActivity implements View.OnClickLis
         }
 
         results_sum_tv = findViewById(R.id.results_sum_tv);
-        results_sum_tv.setText("☆1    "+results_sum[0]+" 枚" + "\n☆2    "+results_sum[1]+" 枚" +
-                "\n☆3    "+results_sum[2] +" 枚" + "\n☆4    "+results_sum[3] +" 枚" + "\n☆5    "+results_sum[4]+" 枚");
+        results_sum_tv.setText("☆1("+prob1+"%)    "+results_sum[0]+" 枚" + "\n☆2("+prob2+"%)    "+results_sum[1]+" 枚" +
+                "\n☆3("+prob3+"%)    "+results_sum[2] +" 枚" + "\n☆4("+prob4+"%)    "+results_sum[3] +" 枚" +
+                "\n☆5("+prob5+"%)    "+results_sum[4]+" 枚");
 
         if(number == 1) {
             tRow1 = findViewById(R.id.tableRow1);
@@ -135,11 +138,8 @@ public class ResultActivity extends AppCompatActivity implements View.OnClickLis
 
     //ガチャの結果に応じて画像をセットする
     public void setImage(ImageView iv, int i){
-        Realm realm = Realm.getDefaultInstance();
-        RealmQuery<SettingModel> query = realm.where(SettingModel.class);
-        RealmResults<SettingModel> results = query.findAll();
-
-        int category = results.get(0).getImg_category();
+        SharedPreferences data = getSharedPreferences("SettingSave", Context.MODE_PRIVATE);
+        int category = data.getInt("imgCategory",0);
 
         if(category == 1) {
             if (i == 1) {

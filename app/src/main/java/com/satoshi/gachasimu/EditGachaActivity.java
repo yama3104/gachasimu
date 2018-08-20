@@ -10,6 +10,8 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.math.BigDecimal;
+
 import io.realm.Realm;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
@@ -88,16 +90,11 @@ public class EditGachaActivity extends AppCompatActivity {
                 String prob4_edtb = prob4_edit.getText().toString();
                 String prob5_edtb = prob5_edit.getText().toString();
 
-                if (prob1_edtb.length() != 0) prob1 = Double.parseDouble(prob1_edtb);
-                else prob1 = 0;
-                if (prob2_edtb.length() != 0) prob2 = Double.parseDouble(prob2_edtb);
-                else prob2 = 0;
-                if (prob3_edtb.length() != 0) prob3 = Double.parseDouble(prob3_edtb);
-                else prob3 = 0;
-                if (prob4_edtb.length() != 0) prob4 = Double.parseDouble(prob4_edtb);
-                else prob4 = 0;
-                if (prob5_edtb.length() != 0) prob5 = Double.parseDouble(prob5_edtb);
-                else prob5 = 0;
+                if (prob1_edtb.length() != 0) prob1 = Double.parseDouble(prob1_edtb); else prob1 = 0;
+                if (prob2_edtb.length() != 0) prob2 = Double.parseDouble(prob2_edtb); else prob2 = 0;
+                if (prob3_edtb.length() != 0) prob3 = Double.parseDouble(prob3_edtb); else prob3 = 0;
+                if (prob4_edtb.length() != 0) prob4 = Double.parseDouble(prob4_edtb); else prob4 = 0;
+                if (prob5_edtb.length() != 0) prob5 = Double.parseDouble(prob5_edtb); else prob5 = 0;
                 /*
                 if(fixedRange_st.length() == 0) {
                     fixedRange = -1;
@@ -107,11 +104,12 @@ public class EditGachaActivity extends AppCompatActivity {
                     fixedRange = 1;
                 }*/
 
-                double sum = prob1 + prob2 + prob3 + prob4 + prob5;
-
-                //Realm.init(this);
-                //Realm realm = Realm.getDefaultInstance();
-                //GachaModel model = null;
+                BigDecimal p1 = BigDecimal.valueOf(prob1);
+                BigDecimal p2 = BigDecimal.valueOf(prob2);
+                BigDecimal p3 = BigDecimal.valueOf(prob3);
+                BigDecimal p4 = BigDecimal.valueOf(prob4);
+                BigDecimal p5 = BigDecimal.valueOf(prob5);
+                double sum = p1.add(p2).add(p3).add(p4).add(p5).doubleValue();
 
                 final Realm realm = Realm.getDefaultInstance();
                 RealmQuery<GachaModel> query = realm.where(GachaModel.class);
@@ -127,17 +125,6 @@ public class EditGachaActivity extends AppCompatActivity {
                     results.get(position).setProb4(prob4);
                     results.get(position).setProb5(prob5);
                     realm.commitTransaction();
-
-                    /*
-                    realm.beginTransaction();
-                    model = realm.createObject(GachaModel.class);
-                    model.setName(name);
-                    model.setProb1(prob1);
-                    model.setProb2(prob2);
-                    model.setProb3(prob3);
-                    model.setProb4(prob4);
-                    model.setProb5(prob5);
-                    realm.commitTransaction();*/
 
                     this.finish();
                 } else if (name.length() == 0) {

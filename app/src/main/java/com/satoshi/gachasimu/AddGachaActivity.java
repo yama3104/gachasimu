@@ -17,6 +17,8 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import java.math.BigDecimal;
+
 import io.realm.Realm;
 
 public class AddGachaActivity extends AppCompatActivity implements View.OnClickListener{
@@ -106,7 +108,12 @@ public class AddGachaActivity extends AppCompatActivity implements View.OnClickL
                     fixedRange = 1;
                 }*/
 
-                double sum = prob1+prob2+prob3+prob4+prob5;
+                BigDecimal p1 = BigDecimal.valueOf(prob1);
+                BigDecimal p2 = BigDecimal.valueOf(prob2);
+                BigDecimal p3 = BigDecimal.valueOf(prob3);
+                BigDecimal p4 = BigDecimal.valueOf(prob4);
+                BigDecimal p5 = BigDecimal.valueOf(prob5);
+                double sum = p1.add(p2).add(p3).add(p4).add(p5).doubleValue();
 
                 //Realm.init(this);
                 Realm realm = Realm.getDefaultInstance();
