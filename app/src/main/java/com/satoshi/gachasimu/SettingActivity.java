@@ -54,7 +54,10 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.setting_img_btn:
+                Intent intent = new Intent(SettingActivity.this, SettingImageActivity.class);
+                startActivity(intent);
 
+                /*
                 AlertDialog.Builder listDlg = new AlertDialog.Builder(this);
                 listDlg.setItems(
                         items,
@@ -72,6 +75,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
                         });
                 listDlg.create().show();
                 break;
+                */
         }
 
     }
