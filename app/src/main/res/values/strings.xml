@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">マイガチャシミュレーション</string>
+    <string name="admob_banner_test">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="admob_banner_id">ca-app-pub-6378485568392983/4903591837</string>
+    <string name="title_activity_setting">SettingActivity</string>
+    <string name="imgPaths_KEY">imagePathsKey</string>
+    <string name="select_image">画像を選択</string>
+</resources>
