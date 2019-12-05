@@ -53,7 +53,7 @@ public class RegiImageActivity extends AppCompatActivity implements View.OnClick
     ImageButton ib1,ib2,ib3,ib4,ib5;
     String imgSetName;
     Bitmap[] bitmaps = new Bitmap[5];
-    ArrayList<ArrayList<String>> imagePaths;
+    ArrayList<ArrayList<String>> imagePaths;  // 全ての画像セットのパス
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -254,6 +254,7 @@ public class RegiImageActivity extends AppCompatActivity implements View.OnClick
     }
 
     public void saveBitmap(){
+        // 今までに保存されたパスを全て読み込む
         SharedPreferences pref = getSharedPreferences("pref", MODE_PRIVATE);
         Gson gson = new Gson();
         imagePaths = gson.fromJson(pref.getString(getString(R.string.imgPaths_KEY),""), new TypeToken<ArrayList<ArrayList<String>>>(){}.getType());
@@ -351,13 +352,14 @@ public class RegiImageActivity extends AppCompatActivity implements View.OnClick
 
             contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
         }
+        // 今までの画像セットリストに今回登録するパスを追加
         SharedPreferences pref = getSharedPreferences("pref", MODE_PRIVATE);
         Gson gson = new Gson();
         imagePaths = gson.fromJson(pref.getString(getString(R.string.imgPaths_KEY),""), new TypeToken<ArrayList<ArrayList<String>>>(){}.getType());
         if(imagePaths == null) imagePaths = new ArrayList<>();
         imagePaths.add(path);
 
-        //sharedPreferenceに保存
+        // SharedPreferenceに保存
         pref.edit().putString(getString(R.string.imgPaths_KEY), gson.toJson(imagePaths)).apply();
 
         finish();

@@ -1,5 +1,6 @@
 package com.satoshi.gachasimu;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -141,6 +142,7 @@ public class ResultActivity extends AppCompatActivity implements View.OnClickLis
         } else return -1;
     }
 
+    @SuppressLint("SetTextI18n")
     public void drawGacha(){
 
         for(int i=0; i<number; i++){
