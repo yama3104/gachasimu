@@ -7,8 +7,8 @@ android {
         applicationId "com.satoshi.gachasimu"
         minSdkVersion 15
         targetSdkVersion 28
-        versionCode 6 //1plus
-        versionName "1.32" //free to plus
+        versionCode 12 //1plus
+        versionName "2.20" //free to plus
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

@@ -30,7 +30,7 @@ import com.google.gson.reflect.TypeToken;
 import java.util.ArrayList;
 
 public class SettingActivity extends AppCompatActivity
-        implements View.OnClickListener, AdapterView.OnItemLongClickListener {
+        implements View.OnClickListener, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
 
     final String[] items = {"Musical instrument", "Dessert", "Stationery"};
     Button setting_img_btn;
@@ -79,6 +79,7 @@ public class SettingActivity extends AppCompatActivity
         for(int i=0; i<imagePaths.size(); i++) imgListItems[i+3] = imagePaths.get(i).get(0);
 
         ListView listView = findViewById(R.id.image_listView);
+        listView.setOnItemClickListener(this);
         listView.setOnItemLongClickListener(this);
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, imgListItems);
         listView.setAdapter(arrayAdapter);
@@ -90,6 +91,15 @@ public class SettingActivity extends AppCompatActivity
                 Intent intent = new Intent(SettingActivity.this, RegiImageActivity.class);
                 startActivity(intent);
         }
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        if(i < 3) return;
+        Intent intent1 = new Intent(SettingActivity.this, RegiImageActivity.class);
+        intent1.putExtra("position", i);
+        startActivity(intent1);
+        //Toast.makeText(this,"pushed!",Toast.LENGTH_SHORT).show();
     }
 
     @Override

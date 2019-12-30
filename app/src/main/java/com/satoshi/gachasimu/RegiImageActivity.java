@@ -27,6 +27,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.ActionBar;
@@ -40,6 +41,7 @@ import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -49,11 +51,12 @@ public class RegiImageActivity extends AppCompatActivity implements View.OnClick
 
     EditText img_name_edit;
     CheckBox use_square_cb;
-    Button btn1,btn2,btn3,btn4,btn5;
-    ImageButton ib1,ib2,ib3,ib4,ib5;
+    Button[] btn = new Button[5];//,btn2,btn3,btn4,btn5;
+    ImageButton[] ib = new ImageButton[5];//ib1,ib2,ib3,ib4,ib5;
     String imgSetName;
     Bitmap[] bitmaps = new Bitmap[5];
     ArrayList<ArrayList<String>> imagePaths;  // 全ての画像セットのパス
+    int position;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,29 +74,47 @@ public class RegiImageActivity extends AppCompatActivity implements View.OnClick
         use_square_cb = findViewById(R.id.use_square_cb);
         use_square_cb.setOnClickListener(this);
 
-        btn1 = findViewById(R.id.regi_btn1);
-        btn2 = findViewById(R.id.regi_btn2);
-        btn3 = findViewById(R.id.regi_btn3);
-        btn4 = findViewById(R.id.regi_btn4);
-        btn5 = findViewById(R.id.regi_btn5);
+        btn[0] = findViewById(R.id.regi_btn1);
+        btn[1] = findViewById(R.id.regi_btn2);
+        btn[2] = findViewById(R.id.regi_btn3);
+        btn[3] = findViewById(R.id.regi_btn4);
+        btn[4] = findViewById(R.id.regi_btn5);
 
-        ib1 = findViewById(R.id.imageView10);
-        ib2 = findViewById(R.id.imageView20);
-        ib3 = findViewById(R.id.imageView30);
-        ib4 = findViewById(R.id.imageView40);
-        ib5 = findViewById(R.id.imageView50);
+        ib[0] = findViewById(R.id.imageView10);
+        ib[1] = findViewById(R.id.imageView20);
+        ib[2] = findViewById(R.id.imageView30);
+        ib[3] = findViewById(R.id.imageView40);
+        ib[4] = findViewById(R.id.imageView50);
 
-        btn1.setOnClickListener(this);
-        btn2.setOnClickListener(this);
-        btn3.setOnClickListener(this);
-        btn4.setOnClickListener(this);
-        btn5.setOnClickListener(this);
+        for(int i=0; i<5; i++) {
+            btn[i].setOnClickListener(this);
+            ib[i].setOnClickListener(this);
+        }
 
-        ib1.setOnClickListener(this);
-        ib2.setOnClickListener(this);
-        ib3.setOnClickListener(this);
-        ib4.setOnClickListener(this);
-        ib5.setOnClickListener(this);
+        Intent intent = getIntent();
+        position = intent.getIntExtra("position",-1);
+
+        // 画像セットの情報を端末から読み込んで、ImageView等にセット
+        if(position >= 0) {
+            SharedPreferences pref = getSharedPreferences("pref", MODE_PRIVATE);
+            Gson gson = new Gson();
+            imagePaths = gson.fromJson(pref.getString(getString(R.string.imgPaths_KEY), ""), new TypeToken<ArrayList<ArrayList<String>>>() {
+            }.getType());
+            if (imagePaths == null) imagePaths = new ArrayList<>();
+            img_name_edit.setText(imagePaths.get(position-3).get(0), TextView.BufferType.NORMAL);
+            img_name_edit.setFocusable(false);
+            for (int i=0; i<5; i++) {
+                InputStream input = null;
+                try {
+                    input = this.openFileInput(imagePaths.get(position-3).get(i + 1));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                bitmaps[i] = BitmapFactory.decodeStream(input);
+            }
+            setRegisteredImage();
+        }
+
     }
 
     public void onClick(View v) {
@@ -159,95 +180,13 @@ public class RegiImageActivity extends AppCompatActivity implements View.OnClick
                     startActivityForResult(intent,2005);
                     break;
 
+                // 画像が切り抜かれたらImageViewにセットする
                 case 2001:
-                    btn1.setVisibility(View.GONE);
-                    ib1.setVisibility(View.VISIBLE);
-                    CropImage.ActivityResult result = CropImage.getActivityResult(data);
-                    Uri croppedUri = result.getUri();
-                    try {
-                        ParcelFileDescriptor pfDescriptor = getContentResolver().openFileDescriptor(croppedUri, "r");
-                        if(pfDescriptor != null) {
-                            FileDescriptor fileDescriptor = pfDescriptor.getFileDescriptor();
-                            Bitmap bmp = BitmapFactory.decodeFileDescriptor(fileDescriptor);
-                            bitmaps[0] = bmp;
-                            pfDescriptor.close();
-                            ib1.setImageBitmap(bmp);
-                        }
-                    } catch (IOException e){
-                        e.printStackTrace();
-                    }
-                    break;
                 case 2002:
-                    btn2.setVisibility(View.GONE);
-                    ib2.setVisibility(View.VISIBLE);
-                    result = CropImage.getActivityResult(data);
-                    croppedUri = result.getUri();
-                    try {
-                        ParcelFileDescriptor pfDescriptor = getContentResolver().openFileDescriptor(croppedUri, "r");
-                        if(pfDescriptor != null) {
-                            FileDescriptor fileDescriptor = pfDescriptor.getFileDescriptor();
-                            Bitmap bmp = BitmapFactory.decodeFileDescriptor(fileDescriptor);
-                            bitmaps[1] = bmp;
-                            pfDescriptor.close();
-                            ib2.setImageBitmap(bmp);
-                        }
-                    } catch (IOException e){
-                        e.printStackTrace();
-                    }
-                    break;
                 case 2003:
-                    btn3.setVisibility(View.GONE);
-                    ib3.setVisibility(View.VISIBLE);
-                    result = CropImage.getActivityResult(data);
-                    croppedUri = result.getUri();
-                    try {
-                        ParcelFileDescriptor pfDescriptor = getContentResolver().openFileDescriptor(croppedUri, "r");
-                        if(pfDescriptor != null) {
-                            FileDescriptor fileDescriptor = pfDescriptor.getFileDescriptor();
-                            Bitmap bmp = BitmapFactory.decodeFileDescriptor(fileDescriptor);
-                            bitmaps[2] = bmp;
-                            pfDescriptor.close();
-                            ib3.setImageBitmap(bmp);
-                        }
-                    } catch (IOException e){
-                        e.printStackTrace();
-                    }
-                    break;
                 case 2004:
-                    btn4.setVisibility(View.GONE);
-                    ib4.setVisibility(View.VISIBLE);
-                    result = CropImage.getActivityResult(data);
-                    croppedUri = result.getUri();
-                    try {
-                        ParcelFileDescriptor pfDescriptor = getContentResolver().openFileDescriptor(croppedUri, "r");
-                        if(pfDescriptor != null) {
-                            FileDescriptor fileDescriptor = pfDescriptor.getFileDescriptor();
-                            Bitmap bmp = BitmapFactory.decodeFileDescriptor(fileDescriptor);
-                            bitmaps[3] = bmp;
-                            pfDescriptor.close();
-                            ib4.setImageBitmap(bmp);
-                        }
-                    } catch (IOException e){
-                        e.printStackTrace();
-                    }
-                    break;
                 case 2005:
-                    btn5.setVisibility(View.GONE);
-                    ib5.setVisibility(View.VISIBLE);
-                    result = CropImage.getActivityResult(data);
-                    croppedUri = result.getUri();
-                    try {
-                        ParcelFileDescriptor pfDescriptor = getContentResolver().openFileDescriptor(croppedUri, "r");
-                        if(pfDescriptor != null) {
-                            FileDescriptor fileDescriptor = pfDescriptor.getFileDescriptor();
-                            Bitmap bmp = BitmapFactory.decodeFileDescriptor(fileDescriptor);
-                            bitmaps[4] = bmp;
-                            pfDescriptor.close();
-                            ib5.setImageBitmap(bmp);
-                        }
-                    } catch (IOException e){
-                        e.printStackTrace();
-                    }
+                    setCroppedImage(requestCode - 2000 - 1, data);
                     break;
             }
         }
@@ -272,6 +211,7 @@ public class RegiImageActivity extends AppCompatActivity implements View.OnClick
                 Toast.makeText(this, "この名前はすでに使われています", Toast.LENGTH_SHORT).show();
                 return;
             } else if(nameExist(imgSetName, imagePaths)){
+                if(position >= 0) continue;
                 Toast.makeText(this, "この名前はすでに使われています", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -352,12 +292,19 @@ public class RegiImageActivity extends AppCompatActivity implements View.OnClick
 
             contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
         }
-        // 今までの画像セットリストに今回登録するパスを追加
+
         SharedPreferences pref = getSharedPreferences("pref", MODE_PRIVATE);
         Gson gson = new Gson();
-        imagePaths = gson.fromJson(pref.getString(getString(R.string.imgPaths_KEY),""), new TypeToken<ArrayList<ArrayList<String>>>(){}.getType());
-        if(imagePaths == null) imagePaths = new ArrayList<>();
-        imagePaths.add(path);
+        imagePaths = gson.fromJson(pref.getString(getString(R.string.imgPaths_KEY), ""), new TypeToken<ArrayList<ArrayList<String>>>() {
+        }.getType());
+        if (imagePaths == null) imagePaths = new ArrayList<>();
+        if(position >= 0){
+            // 既存の画像セットのパスを書き換え (positionの位置をpathに書き換え)
+            imagePaths.set(position-3, path);
+        } else {
+            // 今までの画像セットリストに今回登録するパスを追加
+            imagePaths.add(path);
+        }
 
         // SharedPreferenceに保存
         pref.edit().putString(getString(R.string.imgPaths_KEY), gson.toJson(imagePaths)).apply();
@@ -372,6 +319,35 @@ public class RegiImageActivity extends AppCompatActivity implements View.OnClick
             if(imgSetName.equals(imagePaths.get(i).get(0))) return true;
         }
         return  false;
+    }
+
+    // 切り抜かれた画像をセットする
+    public void setCroppedImage(int case_num, Intent data){
+        btn[case_num].setVisibility(View.GONE);
+        ib[case_num].setVisibility(View.VISIBLE);
+        CropImage.ActivityResult result = CropImage.getActivityResult(data);
+        Uri croppedUri = result.getUri();
+        try {
+            ParcelFileDescriptor pfDescriptor = getContentResolver().openFileDescriptor(croppedUri, "r");
+            if(pfDescriptor != null) {
+                FileDescriptor fileDescriptor = pfDescriptor.getFileDescriptor();
+                Bitmap bmp = BitmapFactory.decodeFileDescriptor(fileDescriptor);
+                bitmaps[case_num] = bmp;
+                pfDescriptor.close();
+                ib[case_num].setImageBitmap(bmp);
+            }
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    // すでに登録された画像を読み込んだ場合は画像をセットする
+    public void setRegisteredImage(){
+        for(int i=0; i<5; i++) {
+            btn[i].setVisibility(View.GONE);
+            ib[i].setVisibility(View.VISIBLE);
+            ib[i].setImageBitmap(bitmaps[i]);
+        }
     }
 
     @Override
